@@ -1,4 +1,5 @@
 const Users = require('../users/users-model');
+const jwt = require('jsonwebtoken');
 
 const checkPayload = (req, res, next) => {
    if ( !req.body.username && !req.body.password ) {
@@ -35,8 +36,24 @@ const checkUsernameExists = async (req, res, next) => {
    }
 }
 
+const makeToken = (user) => {
+   // we use a library called jsonwebtoken
+   const payload = {
+      subject: user.id,
+      username: user.username,
+      role: user.role
+   }
+   const options = {
+      expiresIn: '200s',
+   }
+   return jwt.sign(payload, 'foo', options)
+}
+
+
+
 module.exports = {
    checkPayload,
    checkUsernameExists,
-   checkUsernameUnique
+   checkUsernameUnique,
+   makeToken
 }
